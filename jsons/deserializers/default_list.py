@@ -25,8 +25,7 @@ def default_list_deserializer(
     """
     cls_ = None
     kwargs_ = {**kwargs}
-    cls_args = get_args(cls)
-    if cls_args:
+    if cls_args := get_args(cls):
         cls_ = cls_args[0]
         # Mark the cls as 'inferred' so that later it is known where cls came
         # from and the precedence of classes can be determined.
@@ -37,5 +36,5 @@ def default_list_deserializer(
     elif tasks > 1:
         result = multi_task(load, obj, tasks, task_type, cls_, **kwargs_)
     else:
-        raise JsonsError('Invalid number of tasks: {}'.format(tasks))
+        raise JsonsError(f'Invalid number of tasks: {tasks}')
     return result

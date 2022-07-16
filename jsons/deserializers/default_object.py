@@ -108,7 +108,9 @@ def _get_value_for_attr(
         result = sig_key, None
     else:
         raise UnfulfilledArgumentError(
-            'No value found for "{}"'.format(sig_key), sig_key, obj, orig_cls)
+            f'No value found for "{sig_key}"', sig_key, obj, orig_cls
+        )
+
     return result
 
 
@@ -116,7 +118,7 @@ def _get_value_from_obj(obj, cls, sig, sig_key, meta_hints, **kwargs):
     # Obtain the value for the attribute with the given signature from the
     # given obj. Try to obtain the class of this attribute from the meta info
     # or from type hints.
-    cls_key = '/{}'.format(sig_key)
+    cls_key = f'/{sig_key}'
     cls_str_from_meta = meta_hints.get(cls_key, None)
     new_hints = meta_hints
     cls_from_meta = None
@@ -131,8 +133,7 @@ def _get_value_from_obj(obj, cls, sig, sig_key, meta_hints, **kwargs):
         }
     cls_ = determine_precedence(cls=cls, cls_from_meta=cls_from_meta,
                                 cls_from_type=None, inferred_cls=True)
-    value = load(obj[sig_key], cls_, meta_hints=new_hints, **kwargs)
-    return value
+    return load(obj[sig_key], cls_, meta_hints=new_hints, **kwargs)
 
 
 def _set_remaining_attrs(instance,
@@ -176,7 +177,6 @@ def _get_remaining_args(obj: dict,
                        and attr_name != META_ATTR}
     if strict and remaining_attrs:
         unexpected_arg = list(remaining_attrs.keys())[0]
-        err_msg = ('Type "{}" does not expect "{}"'
-                   .format(get_class_name(cls), unexpected_arg))
+        err_msg = f'Type "{get_class_name(cls)}" does not expect "{unexpected_arg}"'
         raise SignatureMismatchError(err_msg, unexpected_arg, obj, cls)
     return remaining_attrs

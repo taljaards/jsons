@@ -60,15 +60,18 @@ class TestPerformance(TestCase):
         jsons.dump(self.__class__._c3_3, **kwargs)
         d6 = datetime.now()
 
-        delta_sec1 = float('{}.{}'.format((d2 - d1).seconds, (d2 - d1).microseconds))
-        delta_sec2 = float('{}.{}'.format((d4 - d3).seconds, (d4 - d3).microseconds))
-        delta_sec3 = float('{}.{}'.format((d6 - d5).seconds, (d6 - d5).microseconds))
+        delta_sec1 = float(f'{(d2 - d1).seconds}.{(d2 - d1).microseconds}')
+        delta_sec2 = float(f'{(d4 - d3).seconds}.{(d4 - d3).microseconds}')
+        delta_sec3 = float(f'{(d6 - d5).seconds}.{(d6 - d5).microseconds}')
 
-        self.assertTrue(delta_sec3 < time_limit, 'The operation took {} seconds'.format(delta_sec3))
+        self.assertTrue(
+            delta_sec3 < time_limit, f'The operation took {delta_sec3} seconds'
+        )
+
         threshold = 0.1
         avg1 = delta_sec1 / 10
         avg2 = delta_sec2 / 100
         avg3 = delta_sec3 / 1000
         linear_scaling = abs(avg2 - avg1) < threshold and abs(avg3 - avg2) < threshold
 
-        self.assertTrue(linear_scaling, '{}, {}'.format(abs(avg2 - avg1), abs(avg3 - avg2)))
+        self.assertTrue(linear_scaling, f'{abs(avg2 - avg1)}, {abs(avg3 - avg2)}')

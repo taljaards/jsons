@@ -57,13 +57,7 @@ def get_union_params(un: type) -> list:
 
 @cached
 def get_naked_class(cls: type) -> type:
-    # Python3.5: typing classes have __extra__
-    # Python3.6: typing classes have __extra__
-    # Python3.7: typing classes have __origin__
-    # Return the non-generic class (e.g. dict) of a generic type (e.g. Dict).
-    attr = '__origin__'
-    if sys.version_info[1] in (5, 6):
-        attr = '__extra__'
+    attr = '__extra__' if sys.version_info[1] in (5, 6) else '__origin__'
     return getattr(cls, attr, cls)
 
 

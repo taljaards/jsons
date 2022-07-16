@@ -27,6 +27,4 @@ class Verbosity(Flag):
             return Verbosity.WITH_NOTHING
         if value is True:
             return Verbosity.WITH_EVERYTHING
-        if value:
-            return Verbosity.WITH_EVERYTHING
-        return Verbosity.WITH_NOTHING
+        return Verbosity.WITH_EVERYTHING if value else Verbosity.WITH_NOTHING

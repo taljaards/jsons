@@ -19,13 +19,10 @@ def fork(
     (de)serializers from the regular ``StateHolder``.
     """
     fork_inst._fork_counter += 1
-    if name:
-        class_name = name
-    else:
-        class_name = '{}_fork{}'.format(
-            get_class_name(fork_inst),
-            fork_inst._fork_counter
-        )
+    class_name = (
+        name or f'{get_class_name(fork_inst)}_fork{fork_inst._fork_counter}'
+    )
+
     result = type(class_name, (fork_inst,), {})
     result._classes_serializers = fork_inst._classes_serializers.copy()
     result._classes_deserializers = fork_inst._classes_deserializers.copy()

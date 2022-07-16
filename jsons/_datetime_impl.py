@@ -3,14 +3,14 @@ PRIVATE MODULE: do not import (from) it directly.
 
 This module contains functionality for ``datetime`` related stuff.
 """
+
 from datetime import datetime, timezone, timedelta, time, date
 from typing import Union
 
 
 RFC3339_DATE_PATTERN = '%Y-%m-%d'
 RFC3339_TIME_PATTERN = '%H:%M:%S'
-RFC3339_DATETIME_PATTERN = '{}T{}'.format(
-    RFC3339_DATE_PATTERN, RFC3339_TIME_PATTERN)
+RFC3339_DATETIME_PATTERN = f'{RFC3339_DATE_PATTERN}T{RFC3339_TIME_PATTERN}'
 
 
 def to_str(
@@ -21,7 +21,7 @@ def to_str(
     offset = get_offset_str(dt, fork_inst)
     if not strip_microseconds and getattr(dt, 'microsecond', None):
         pattern += '.%f'
-    return dt.strftime("{}{}".format(pattern, offset))
+    return dt.strftime(f"{pattern}{offset}")
 
 
 def get_offset_str(
@@ -49,12 +49,11 @@ def get_datetime_inst(obj: str, pattern: str) -> datetime:
     :return: a datetime instance with timezone info.
     """
     if obj[-1] == 'Z':
-        result = _datetime_utc_inst(obj, pattern)
+        return _datetime_utc_inst(obj, pattern)
     elif 'T' in pattern:
-        result = _datetime_offset_inst(obj, pattern)
+        return _datetime_offset_inst(obj, pattern)
     else:
-        result = datetime.strptime(obj, pattern)
-    return result
+        return datetime.strptime(obj, pattern)
 
 
 def _datetime_offset_str(obj: datetime, fork_inst: type) -> str:
@@ -89,8 +88,7 @@ def _timedelta_offset_str(tdelta: timedelta) -> str:
     offset_m = int((offset_s / 60) % 60)
     offset_t = time(abs(offset_h), abs(offset_m))
     operator = '+' if offset_s > 0 else '-'
-    offset = offset_t.strftime('{}%H:%M'.format(operator))
-    return offset
+    return offset_t.strftime(f'{operator}%H:%M')
 
 
 def _datetime_utc_inst(obj: str, pattern: str) -> datetime:
@@ -100,7 +98,7 @@ def _datetime_utc_inst(obj: str, pattern: str) -> datetime:
     :param pattern: the datetime pattern that is used.
     :return: a datetime instance with timezone info.
     """
-    dattim_str = obj[0:-1]
+    dattim_str = obj[:-1]
     dattim_obj = datetime.strptime(dattim_str, pattern)
     return _new_datetime(dattim_obj.date(), dattim_obj.time(), timezone.utc)
 
@@ -115,7 +113,7 @@ def _datetime_offset_inst(obj: str, pattern: str) -> datetime:
     dat_str, tim_str = obj.split('T')
     splitter, factor = ('+', 1) if '+' in tim_str else ('-', -1)
     naive_tim_str, offset = tim_str.split(splitter)
-    naive_dattim_str = '{}T{}'.format(dat_str, naive_tim_str)
+    naive_dattim_str = f'{dat_str}T{naive_tim_str}'
     dattim_obj = datetime.strptime(naive_dattim_str, pattern)
     hrs_str, mins_str = offset.split(':')
     hrs = int(hrs_str) * factor

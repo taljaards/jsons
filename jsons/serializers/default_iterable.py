@@ -41,13 +41,13 @@ def default_iterable_serializer(
         subclasses = _get_subclasses(obj, None)
 
     if tasks < 2:
-        result = [dump(elem, cls=subclasses[i], **kwargs_)
-                  for i, elem in enumerate(obj)]
-    else:
-        zipped_objs = list(zip(obj, subclasses))
-        result = multi_task(do_dump, zipped_objs, tasks, task_type, **kwargs_)
+        return [
+            dump(elem, cls=subclasses[i], **kwargs_)
+            for i, elem in enumerate(obj)
+        ]
 
-    return result
+    zipped_objs = list(zip(obj, subclasses))
+    return multi_task(do_dump, zipped_objs, tasks, task_type, **kwargs_)
 
 
 def _get_subclasses(obj: Iterable, cls: type = None) -> Tuple[type, ...]:
@@ -61,22 +61,20 @@ def _get_subclasses(obj: Iterable, cls: type = None) -> Tuple[type, ...]:
             # E.g. Tuple[int, str, str]
             subclasses = args
     if len(subclasses) != len(obj):
-        msg = ('Not enough generic types ({}) in {}, expected {} to match '
-               'the iterable of length {}'
-               .format(len(subclasses), cls, len(obj), len(obj)))
+        msg = f'Not enough generic types ({len(subclasses)}) in {cls}, expected {len(obj)} to match the iterable of length {len(obj)}'
+
         raise SerializationError(msg)
     return subclasses
 
 
 def do_dump(obj_cls_tuple: Tuple[object, type], *args, **kwargs):
-    kwargs_ = {**kwargs}
-    kwargs_['tasks'] = 1
+    kwargs_ = {**kwargs, 'tasks': 1}
     return dump(*obj_cls_tuple, *args, **kwargs_)
 
 
 def determine_cls(obj: Iterable, cls: Optional[type]) -> Optional[type]:
     cls_ = cls
-    if not cls and hasattr(obj, '__getitem__') and len(obj) > 0:
+    if not cls_ and hasattr(obj, '__getitem__') and len(obj) > 0:
         obj_with_only_one_elem = obj.__getitem__(slice(0, 1))
         cls_ = get_type(obj_with_only_one_elem)
     return cls_

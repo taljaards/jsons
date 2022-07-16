@@ -16,7 +16,7 @@ class TestChainMap(TestCase):
         m = ChainMap(d1, d2)
 
         dumped = jsons.dump(m)
-        self.assertDictEqual({**d1, **d2}, dumped)
+        self.assertDictEqual(d1 | d2, dumped)
 
     def test_load_chain_map(self):
         d = {

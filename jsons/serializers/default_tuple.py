@@ -24,6 +24,7 @@ def default_namedtuple_serializer(obj: tuple, **kwargs) -> dict:
     process.
     :return: a dict of which all elements are serialized.
     """
-    result = {field_name: dump(getattr(obj, field_name), **kwargs)
-              for field_name in obj._fields}
-    return result
+    return {
+        field_name: dump(getattr(obj, field_name), **kwargs)
+        for field_name in obj._fields
+    }

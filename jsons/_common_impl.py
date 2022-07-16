@@ -37,8 +37,8 @@ class StateHolder:
     @classmethod
     def _warn(cls, msg, *args, **kwargs):
         if not cls._suppress_warnings:
-            msg_ = ('{} You can suppress warnings like this using '
-                    'jsons.suppress_warnings().'.format(msg))
+            msg_ = f'{msg} You can suppress warnings like this using jsons.suppress_warnings().'
+
             warnings.warn(msg_, *args, **kwargs)
 
 
@@ -60,9 +60,8 @@ def get_class_name(cls: type,
         return transformer(cls_name)
     cls_name = _get_simple_name(cls)
     if fully_qualified:
-        module = _get_module(cls)
-        if module:
-            cls_name = '{}.{}'.format(module, cls_name)
+        if module := _get_module(cls):
+            cls_name = f'{module}.{cls_name}'
     cls_name = transformer(cls_name)
     return cls_name
 
@@ -93,7 +92,7 @@ def get_cls_from_str(cls_str: str, source: object, fork_inst) -> type:
 def _get_generic_cls_from_str(cls_str: str, source: object, fork_inst) -> type:
     # If cls_str represents a generic type, try to parse the sub types.
     origin_str, subtypes_str = cls_str.split('[')
-    subtypes_str = subtypes_str[0:-1]  # Remove the ']'.
+    subtypes_str = subtypes_str[:-1]
     origin = get_cls_from_str(origin_str, source, fork_inst)
     subtypes = [get_cls_from_str(s.strip(), source, fork_inst)
                 for s in subtypes_str.split(',')]
@@ -141,8 +140,8 @@ def _lookup_announced_class(
         fork_inst: type) -> type:
     cls = fork_inst._announced_classes.get(cls_str)
     if not cls:
-        msg = ('Could not find a suitable type for "{}". Make sure it can be '
-               'imported or that is has been announced.'.format(cls_str))
+        msg = f'Could not find a suitable type for "{cls_str}". Make sure it can be imported or that is has been announced.'
+
         raise UnknownClassError(msg, source, cls_str)
     return cls
 

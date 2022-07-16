@@ -14,8 +14,7 @@ def default_mapping_deserializer(obj: dict, cls: type, **kwargs) -> Mapping:
     :return: a deserialized set instance.
     """
     cls_ = Mapping
-    cls_args = get_args(cls)
-    if cls_args:
+    if cls_args := get_args(cls):
         cls_ = MappingType[cls_args]
     dict_ = default_dict_deserializer(obj, cls_, **kwargs)
     result = dict_

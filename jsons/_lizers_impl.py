@@ -91,9 +91,9 @@ def get_serializer(
     :param fork_inst: if given, it uses this fork of ``JsonSerializable``.
     :return: a serializer function.
     """
-    serializer = _get_lizer(cls, fork_inst._serializers,
-                            fork_inst._classes_serializers, fork_inst)
-    return serializer
+    return _get_lizer(
+        cls, fork_inst._serializers, fork_inst._classes_serializers, fork_inst
+    )
 
 
 @cached
@@ -106,9 +106,12 @@ def get_deserializer(
     :param fork_inst: if given, it uses this fork of ``JsonSerializable``.
     :return: a deserializer function.
     """
-    deserializer = _get_lizer(cls, fork_inst._deserializers,
-                              fork_inst._classes_deserializers, fork_inst)
-    return deserializer
+    return _get_lizer(
+        cls,
+        fork_inst._deserializers,
+        fork_inst._classes_deserializers,
+        fork_inst,
+    )
 
 
 def _get_lizer(
@@ -132,8 +135,7 @@ def _get_lizer_by_parents(
         classes_lizers: list,
         fork_inst: type) -> callable:
     result = None
-    parents = _get_parents(cls, classes_lizers)
-    if parents:
+    if parents := _get_parents(cls, classes_lizers):
         pname = get_class_name(parents[0], str.lower, fully_qualified=True)
         result = lizers[pname]
     return result

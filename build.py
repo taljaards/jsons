@@ -7,7 +7,7 @@ def get_version():
     with open('setup.py', 'r') as f:
         setup_content = ' '.join(f.readlines())
         res = re.search("version='(.*?)'", setup_content)
-        return res.group(1)
+        return res[1]
 
 
 def get_exclusions():

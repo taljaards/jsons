@@ -6,6 +6,7 @@ from jsons._common_impl import get_class_name, get_cls_from_str, StateHolder
 class TestCommonImpl(TestCase):
     def test_get_class_name_without__name__(self):
 
+
         class Meta(type):
             __name__ = None
 
@@ -13,8 +14,7 @@ class TestCommonImpl(TestCase):
             pass
 
         self.assertEqual('C', get_class_name(C))
-        self.assertEqual('{}.C'.format(__name__),
-                         get_class_name(C, fully_qualified=True))
+        self.assertEqual(f'{__name__}.C', get_class_name(C, fully_qualified=True))
 
     def test_get_class_name_of_none(self):
         self.assertEqual('NoneType', get_class_name(None))

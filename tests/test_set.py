@@ -8,7 +8,7 @@ class TestSet(TestCase):
     def test_dump_set(self):
         dat = datetime.datetime(year=2018, month=7, day=8, hour=21, minute=34,
                                 tzinfo=datetime.timezone.utc)
-        set_ = {dat, dat}
+        set_ = {dat}
         dumped = jsons.dump(set_)
         expected = ['2018-07-08T21:34:00Z']
         self.assertEqual(dumped, expected)

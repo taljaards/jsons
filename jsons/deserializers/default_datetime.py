@@ -19,5 +19,5 @@ def default_datetime_deserializer(obj: str,
         # strptime allows a fraction of length 6, so trip the rest (if exists).
         regex_pattern = re.compile(r'(\.[0-9]+)')
         frac = regex_pattern.search(obj).group()
-        obj = obj.replace(frac, frac[0:7])
+        obj = obj.replace(frac, frac[:7])
     return get_datetime_inst(obj, pattern)

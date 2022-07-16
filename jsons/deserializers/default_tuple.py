@@ -19,15 +19,14 @@ def default_tuple_deserializer(obj: list,
     """
     if hasattr(cls, '_fields'):
         return default_namedtuple_deserializer(obj, cls, **kwargs)
-    cls_args = get_args(cls)
-    if cls_args:
+    if cls_args := get_args(cls):
         tuple_types = getattr(cls, '__tuple_params__', cls_args)
         if tuple_with_ellipsis(cls):
             tuple_types = [tuple_types[0]] * len(obj)
         list_ = [load(value, tuple_types[i], **kwargs)
                  for i, value in enumerate(obj)]
     else:
-        list_ = [load(value, **kwargs) for i, value in enumerate(obj)]
+        list_ = [load(value, **kwargs) for value in obj]
     return tuple(list_)
 
 
@@ -56,12 +55,10 @@ def default_namedtuple_deserializer(
             hint = getattr(cls, '_field_types', {}).get(field_name)
             if NoneType not in (get_union_params(hint) or []):
                 # The value 'None' is not permitted here.
-                msg = ('No value present in {} for argument "{}"'
-                       .format(obj, field_name))
+                msg = f'No value present in {obj} for argument "{field_name}"'
                 raise UnfulfilledArgumentError(msg, field_name, obj, cls)
         field_types = getattr(cls, '_field_types', None)
         cls_ = field_types.get(field_name) if field_types else None
         loaded_field = load(field, cls_, **kwargs)
         args.append(loaded_field)
-    inst = cls(*args)
-    return inst
+    return cls(*args)

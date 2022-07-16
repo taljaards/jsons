@@ -105,7 +105,10 @@ def _do_load(json_obj: object,
              **kwargs):
     cls_name = get_class_name(cls, fully_qualified=True)
     if deserializer is None:
-        raise DeserializationError('No deserializer for type "{}"'.format(cls_name), json_obj, cls)
+        raise DeserializationError(
+            f'No deserializer for type "{cls_name}"', json_obj, cls
+        )
+
     try:
         result = deserializer(json_obj, cls, **kwargs)
         validate(result, cls, kwargs['fork_inst'])
@@ -113,7 +116,7 @@ def _do_load(json_obj: object,
         clear()
         if isinstance(err, JsonsError):
             raise
-        message = 'Could not deserialize value "{}" into "{}". {}'.format(json_obj, cls_name, err)
+        message = f'Could not deserialize value "{json_obj}" into "{cls_name}". {err}'
         raise DeserializationError(message, json_obj, cls)
     else:
         if initial:
@@ -175,8 +178,12 @@ def loadb(
     ``cls`` if given.
     """
     if not isinstance(bytes_, bytes):
-        raise DeserializationError('loadb accepts bytes only, "{}" was given'
-                                   .format(type(bytes_)), bytes_, cls)
+        raise DeserializationError(
+            f'loadb accepts bytes only, "{type(bytes_)}" was given',
+            bytes_,
+            cls,
+        )
+
     jdkwargs = jdkwargs or {}
     str_ = bytes_.decode(encoding=encoding)
     return loads(str_, cls, jdkwargs=jdkwargs, *args, **kwargs)
@@ -192,8 +199,8 @@ def _check_and_get_cls_and_meta_hints(
         invalid_type = get_class_name(type(json_obj), fully_qualified=True)
         valid_types = [get_class_name(typ, fully_qualified=True)
                        for typ in VALID_TYPES]
-        msg = ('Invalid type: "{}", only arguments of the following types are '
-               'allowed: {}'.format(invalid_type, ", ".join(valid_types)))
+        msg = f'Invalid type: "{invalid_type}", only arguments of the following types are allowed: {", ".join(valid_types)}'
+
         raise DeserializationError(msg, json_obj, cls)
 
     cls_from_meta, meta = get_cls_and_meta(json_obj, fork_inst)
@@ -211,6 +218,7 @@ def _check_for_none(json_obj: object, cls: type):
     if json_obj is None and not can_match_with_none(cls):
         cls_name = get_class_name(cls).lower()
         raise DeserializationError(
-            message='NoneType cannot be deserialized into {}'.format(cls_name),
+            message=f'NoneType cannot be deserialized into {cls_name}',
             source=json_obj,
-            target=cls)
+            target=cls,
+        )

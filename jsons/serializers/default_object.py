@@ -110,7 +110,7 @@ def _do_serialize(
         strip_attr: Union[str, MutableSequence[str], Tuple[str]] = None,
         strict: bool = False,
         fork_inst: Optional[type] = StateHolder) -> Dict[str, object]:
-    result = dict()
+    result = {}
     for attr_name, cls_ in attributes.items():
         attr = obj.__getattribute__(attr_name)
         dumped_elem = None
@@ -126,18 +126,18 @@ def _do_serialize(
                                **kwargs)
             _store_cls_info(dumped_elem, attr, kwargs)
         except RecursionDetectedError:
-            fork_inst._warn('Recursive structure detected in attribute "{}" '
-                            'of object of type "{}", ignoring the attribute.'
-                            .format(attr_name, get_class_name(cls)))
+            fork_inst._warn(
+                f'Recursive structure detected in attribute "{attr_name}" of object of type "{get_class_name(cls)}", ignoring the attribute.'
+            )
+
         except SerializationError as err:
             if strict:
                 raise
-            else:
-                fork_inst._warn('Failed to dump attribute "{}" of object of '
-                                'type "{}". Reason: {}. Ignoring the '
-                                'attribute.'
-                                .format(attr, get_class_name(cls), err.message))
-                break
+            fork_inst._warn(
+                f'Failed to dump attribute "{attr}" of object of type "{get_class_name(cls)}". Reason: {err.message}. Ignoring the attribute.'
+            )
+
+            break
         _add_dumped_elem(result, attr_name, dumped_elem,
                          strip_nulls, key_transformer)
     return result
@@ -253,7 +253,7 @@ def _get_complete_class_dict(cls: type) -> dict:
     cls_dict = {}
     # Loop reversed so values of sub-classes override those of super-classes.
     for cls_or_elder in reversed(cls.mro()):
-        cls_dict.update(cls_or_elder.__dict__)
+        cls_dict |= cls_or_elder.__dict__
     return cls_dict
 
 
@@ -299,7 +299,7 @@ def _fill_collection_of_types(
 
 def _get_class_name_and_strip_cls(cls_name: Optional[str], obj: dict) -> str:
     result = cls_name
-    if not cls_name and '-cls' in obj:
+    if not result and '-cls' in obj:
         result = obj['-cls']
     if '-cls' in obj:
         del obj['-cls']

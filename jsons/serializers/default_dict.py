@@ -30,10 +30,9 @@ def default_dict_serializer(
     process.
     :return: a dict of which all elements are serialized.
     """
-    result = dict()
+    result = {}
     types = types or dict()
-    for key in obj:
-        obj_ = obj[key]
+    for key, obj_ in obj.items():
         cls_ = types.get(key, None)
         dumped_elem = dump(obj_,
                            cls=cls_,

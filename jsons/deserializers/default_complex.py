@@ -19,10 +19,11 @@ def default_complex_deserializer(obj: Dict[str, float],
                          cls=Dict[str, float])
         return complex(clean_obj['real'], clean_obj['imag'])
     except KeyError as err:
-        raise AttributeError("Cannot deserialize {} to a complex number, "
-                             "does not contain key '{}'"
-                             .format(obj, err.args[0]))
+        raise AttributeError(
+            f"Cannot deserialize {obj} to a complex number, does not contain key '{err.args[0]}'"
+        )
+
     except DeserializationError as err:
-        raise AttributeError("Cannot deserialize {} to a complex number, "
-                             "cannot cast value {} to float"
-                             .format(obj, err.source))
+        raise AttributeError(
+            f"Cannot deserialize {obj} to a complex number, cannot cast value {err.source} to float"
+        )

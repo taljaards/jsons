@@ -21,6 +21,7 @@ class TestObject(TestCase):
         self.assertDictEqual(exp, dump)
 
     def test_dump_object_verbose(self):
+
         class A:
             def __init__(self, x):
                 self.x = x
@@ -37,11 +38,12 @@ class TestObject(TestCase):
         dumped = jsons.dump(c, verbose=jsons.Verbosity.WITH_CLASS_INFO)
         expectation = {
             'classes': {
-                '/': '{}.C'.format(__name__),
-                '/b': '{}.B'.format(__name__),
-                '/b/a': '{}.A'.format(__name__)
+                '/': f'{__name__}.C',
+                '/b': f'{__name__}.B',
+                '/b/a': f'{__name__}.A',
             }
         }
+
 
         self.assertDictEqual(expectation, dumped['-meta'])
 
@@ -58,6 +60,7 @@ class TestObject(TestCase):
 
     def test_dump_object_verbose_with_dict(self):
 
+
         class C:
             def __init__(self, d: Dict[int, float]):
                 self.d = d
@@ -65,11 +68,9 @@ class TestObject(TestCase):
         c = C({42: 42.0})
 
         expectation = {
-            'classes': {
-                '/': '{}.C'.format(__name__),
-                '/d': 'typing.Dict[int, float]',
-            }
+            'classes': {'/': f'{__name__}.C', '/d': 'typing.Dict[int, float]'}
         }
+
 
         dumped = jsons.dump(c, verbose=jsons.Verbosity.WITH_CLASS_INFO)
         self.assertDictEqual(expectation, dumped['-meta'])

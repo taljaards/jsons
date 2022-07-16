@@ -21,9 +21,8 @@ def default_union_serializer(obj: object, cls: Union, **kwargs) -> object:
             return dump(obj, sub_type, **kwargs)
         except JsonsError:
             pass  # Try the next one.
-    else:
-        args_msg = ', '.join([get_class_name(cls_)
-                              for cls_ in get_union_params(cls)])
-        err_msg = ('Could not match the object of type "{}" to any type of '
-                   'the Union: {}'.format(str(cls), args_msg))
-        raise SerializationError(err_msg)
+    args_msg = ', '.join([get_class_name(cls_)
+                          for cls_ in get_union_params(cls)])
+    err_msg = f'Could not match the object of type "{str(cls)}" to any type of the Union: {args_msg}'
+
+    raise SerializationError(err_msg)

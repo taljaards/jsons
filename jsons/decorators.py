@@ -138,9 +138,8 @@ def _get_async_wrapper(
 def _get_params_sig(args, func):
     sig = signature(func)
     params = sig.parameters
-    param_names = [param_name for param_name in params]
-    result = [(args[i], params[param_names[i]]) for i in range(len(args))]
-    return result
+    param_names = list(params)
+    return [(args[i], params[param_names[i]]) for i in range(len(args))]
 
 
 def _map_args(args, decorated, fork_inst, mapper, mapper_kwargs):
@@ -162,16 +161,14 @@ def _map_args(args, decorated, fork_inst, mapper, mapper_kwargs):
 def _map_returnvalue(returnvalue, decorated, fork_inst, mapper, mapper_kwargs):
     return_annotation = signature(decorated).return_annotation
     cls = return_annotation if return_annotation != Parameter.empty else None
-    result = mapper(returnvalue, cls=cls, fork_inst=fork_inst, **mapper_kwargs)
-    return result
+    return mapper(returnvalue, cls=cls, fork_inst=fork_inst, **mapper_kwargs)
 
 
 def _run_decorated(decorated, mapper, fork_inst, args, kwargs, mapper_kwargs):
     new_args = args
     if mapper:
         new_args = _map_args(args, decorated, fork_inst, mapper, mapper_kwargs)
-    result = decorated(*new_args, **kwargs)
-    return result
+    return decorated(*new_args, **kwargs)
 
 
 def _validate_decoration(decorated, fork_inst):
